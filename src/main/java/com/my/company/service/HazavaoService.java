@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 public class HazavaoService {
-    private static final String API_KEY = System.getenv("OPENAI_API_KEY");
+    private static final String API_KEY = System.getenv("OPEN_API_KEY");
 
     public String getDefinition(String teny) throws Exception {
         String body = """
