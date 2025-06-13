@@ -1,11 +1,7 @@
 package com.my.company.endpoint.rest.controller.health;
 
 import com.my.company.service.HazavaoService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/hazavao")
@@ -18,8 +14,11 @@ public class HazavaoController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getDefinition(@RequestParam String teny) {
-        String definition = hazavaoService.getDefinition(teny);
-        return ResponseEntity.ok(definition);
+    public String hazavao(@RequestParam String teny) {
+        try {
+            return hazavaoService.getDefinition(teny);
+        } catch (Exception e) {
+            return "Nisy olana: " + e.getMessage();
+        }
     }
 }

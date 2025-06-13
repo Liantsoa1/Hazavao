@@ -1,10 +1,13 @@
 package com.my.company.service;
+import org.springframework.stereotype.Service;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
+@Service
 public class HazavaoService {
     private static final String API_KEY = System.getenv("OPENAI_API_KEY");
 
