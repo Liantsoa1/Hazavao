@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class HazavaoSynonymeService {
 
-    private static final String API_KEY = System.getenv("OPENAI_API_KEY");
+    private static final String API_KEY = System.getenv("OPEN_API_KEY");
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     public List<String> getSynonymes(String teny) throws Exception {
