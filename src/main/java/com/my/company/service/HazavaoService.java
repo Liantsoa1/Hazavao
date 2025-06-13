@@ -1,57 +1,33 @@
 package com.my.company.service;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 
-import org.springframework.stereotype.Service;
-import okhttp3.*;
-import org.json.JSONObject;
-
-@Service
 public class HazavaoService {
+    private static final String API_KEY = System.getenv("OPENAI_API_KEY");
 
-    private final String apiKey;
-
-    private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-
-    public HazavaoService() {
-        apiKey = System.getenv("OPENAI_API_KEY");
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("La variable d'environnement OPENAI_API_KEY n'est pas définie !");
-        }
-    }
-
-    public String getDefinition(String teny) {
-        try {
-            OkHttpClient client = new OkHttpClient();
-
-            String jsonBody = """
+    public String getDefinition(String teny) throws Exception {
+        String body = """
             {
               "model": "gpt-3.5-turbo",
               "messages": [
-                {"role": "user", "content": "Hazavao amin'ny teny malagasy ny dikan'ny teny hoe: '%s'"}
+                {"role": "user", "content": "Hazavao amin'ny teny malagasy ny teny: %s"}
               ]
             }
             """.formatted(teny);
 
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .addHeader("Authorization", "Bearer " + apiKey)
-                    .addHeader("Content-Type", "application/json")
-                    .post(RequestBody.create(jsonBody, MediaType.get("application/json")))
-                    .build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + API_KEY)
+                .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
+                .build();
 
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    return "Tsy afaka nanazava ilay teny: " + teny;
-                }
-                String responseBody = response.body().string();
-                JSONObject json = new JSONObject(responseBody);
-                return json.getJSONArray("choices")
-                        .getJSONObject(0)
-                        .getJSONObject("message")
-                        .getString("content");
-            }
-        } catch (Exception e) {
-            return "Nisy olana: " + e.getMessage();
-        }
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response.body();
     }
 }
-
